@@ -1,0 +1,1 @@
+export CONFIG_DIR=$PWD/testdata/cert

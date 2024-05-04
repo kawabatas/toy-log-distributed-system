@@ -1,18 +1,31 @@
 package server
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"errors"
+	"io"
 	"log"
 	"net/http"
 	"time"
 )
 
-func NewHTTPServer(addr string) (*http.Server, error) {
+func NewHTTPServer(addr string, opts ...Option) (*http.Server, error) {
 	httpServer := newHTTPServer()
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /", httpServer.handleProduce)
 	mux.HandleFunc("GET /", httpServer.handleConsume)
+	mux.HandleFunc("GET /hello", func(w http.ResponseWriter, r *http.Request) {
+		_, _ = io.WriteString(w, "Hello, world!\n")
+	})
+
+	var option option
+	for _, opt := range opts {
+		err := opt(&option)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	s := &http.Server{
 		Addr:              addr,
@@ -21,7 +34,23 @@ func NewHTTPServer(addr string) (*http.Server, error) {
 		Handler:           http.TimeoutHandler(mux, 2*time.Second, "timeout handler"),
 		IdleTimeout:       time.Second,
 	}
+	if option.tlsConfig != nil {
+		s.TLSConfig = option.tlsConfig
+	}
 	return s, nil
+}
+
+type option struct {
+	tlsConfig *tls.Config
+}
+
+type Option func(o *option) error
+
+func WithTLSConfig(cfg *tls.Config) Option {
+	return func(o *option) error {
+		o.tlsConfig = cfg
+		return nil
+	}
 }
 
 type httpServer struct {

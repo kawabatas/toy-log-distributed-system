@@ -1,0 +1,17 @@
+{
+  "CN": "client",
+  "hosts": [""],
+  "key": {
+    "algo": "ecdsa",
+    "size": 256
+  },
+  "names": [
+    {
+      "C": "JP",
+      "L": "Shibuya",
+      "ST": "Tokyo",
+      "O": "Example-Company",
+      "OU": "Example-Engineer-Team"
+    }
+  ]
+}
