@@ -8,6 +8,7 @@ import (
 )
 
 var ErrOffsetNotFound = errors.New("offset not found")
+var emptyID ulid.ULID
 
 type Log struct {
 	mu      sync.Mutex
@@ -21,7 +22,9 @@ func NewLog() *Log {
 func (c *Log) Append(record Record) (uint64, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	record.ID = ulid.Make()
+	if record.ID == emptyID {
+		record.ID = ulid.Make()
+	}
 	record.Offset = uint64(len(c.records))
 	c.records = append(c.records, record)
 	return record.Offset, nil

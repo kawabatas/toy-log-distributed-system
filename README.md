@@ -9,6 +9,11 @@ I decided to avoid using gRPC and the Raft consensus algorithm.
 - Step2 mTLS
 - Step3 Service Discovery with Serf
 
+Check with agent test.
+```
+go test -timeout 30s -run ^TestAgent$ github.com/kawabatas/toy-log-distributed-system/internal/agent
+```
+
 # References
 - [Distributed Services with Go](https://pragprog.com/titles/tjgo/distributed-services-with-go/)
 - [travisjeffery/proglog](https://github.com/travisjeffery/proglog)
